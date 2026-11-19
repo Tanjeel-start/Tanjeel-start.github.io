@@ -325,6 +325,137 @@
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
 
+    /* Notes Section */
+    .notes-intro {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      margin-bottom: 1.15rem;
+    }
+
+    .notes-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .notes-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.48rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      backdrop-filter: blur(12px);
+      transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .notes-tab:hover {
+      border-color: var(--accent);
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+
+    .notes-tab.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent-bright);
+      box-shadow: 0 0 18px rgba(245, 166, 35, 0.18);
+    }
+
+    [data-theme="light"] .notes-tab.active {
+      color: var(--accent);
+      box-shadow: 0 0 12px rgba(194, 106, 10, 0.12);
+    }
+
+    .notes-tab-count {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.75rem;
+      padding: 0.05rem 0.42rem;
+      border-radius: 999px;
+      background: rgba(245, 166, 35, 0.12);
+      color: var(--accent);
+    }
+
+    .notes-tab.active .notes-tab-count {
+      background: var(--accent);
+      color: #0b0906;
+      font-weight: 600;
+    }
+
+    [data-theme="light"] .notes-tab.active .notes-tab-count {
+      color: #fff;
+    }
+
+    .notes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .note-card,
+    .notes-empty {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      backdrop-filter: blur(12px);
+    }
+
+    .note-card {
+      padding: 1.1rem 1.3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.9rem;
+      transition: border-color 0.15s ease;
+    }
+
+    .note-card:hover {
+      border-color: rgba(245, 176, 65, 0.42);
+    }
+
+    .note-info {
+      min-width: 0;
+      flex: 1 1 240px;
+    }
+
+    .note-info h3 {
+      font-size: 1rem;
+      margin-bottom: 0.2rem;
+      word-break: break-word;
+    }
+
+    .note-info .meta {
+      margin-bottom: 0;
+    }
+
+    .note-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+    }
+
+    .btn-sm {
+      padding: 0.4rem 0.85rem;
+      font-size: 0.83rem;
+      border-radius: 7px;
+    }
+
+    .notes-empty {
+      padding: 1.4rem 1.3rem;
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      text-align: center;
+    }
+
     /* Contact */
     .contact-links {
       display: flex;
@@ -346,11 +477,16 @@
 
     @media (max-width: 600px) {
       .nav-links {
-        gap: 1rem;
+        gap: 0.85rem;
         font-size: 0.84rem;
+        flex-wrap: wrap;
       }
       .hero {
         padding-top: 3.5rem;
+      }
+      .note-card {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
   </style>
@@ -365,6 +501,7 @@
         <a href="#research">Research</a>
         <a href="#experience">Experience</a>
         <a href="#education">Education</a>
+        <a href="#notes">Notes</a>
         <a href="#contact">Contact</a>
       </nav>
       <button class="theme-btn" id="themeToggle" aria-label="Toggle theme">Light Mode</button>
@@ -482,6 +619,16 @@
       </ul>
     </section>
 
+    <!-- Notes -->
+    <section id="notes">
+      <h2>Notes</h2>
+      <p class="notes-intro">
+        Study notes and formula sheets organized by subject. Select a category to browse or download PDFs.
+      </p>
+      <div class="notes-tabs" id="notesTabs" role="tablist" aria-label="Note categories"></div>
+      <div class="notes-list" id="notesPanel" role="tabpanel" aria-live="polite"></div>
+    </section>
+
     <!-- Contact -->
     <section id="contact">
       <h2>Contact</h2>
@@ -512,6 +659,161 @@
       root.setAttribute('data-theme', isDark ? 'light' : 'dark');
       btn.textContent = isDark ? 'Dark Mode' : 'Light Mode';
     });
+
+    // Notes Library (URL-encoded paths for GitHub Pages)
+    const NOTES_BASE_DIR = 'My notes';
+    const NOTE_CATEGORIES = [
+      {
+        label: 'Math Methods',
+        folder: 'Math methods',
+        files: [
+          {
+            file: 'Gamma_and_Beta_functions.pdf',
+            title: 'Gamma and Beta Functions'
+          }
+        ]
+      },
+      {
+        label: 'Classical Mechanics',
+        folder: 'Classical Mechanics',
+        files: []
+      },
+      {
+        label: 'Classical Electrodynamics',
+        folder: 'Classical Electrodynamics',
+        files: []
+      },
+      {
+        label: 'Quantum Mechanics',
+        folder: 'Quantum Mechanics',
+        files: []
+      },
+      {
+        label: 'Statistical Mechanics',
+        folder: 'Statistical Mechanics',
+        files: []
+      },
+      {
+        label: 'General Relativity',
+        folder: 'General Relativity',
+        files: []
+      }
+    ];
+
+    function buildNoteUrl(folder, filename) {
+      return [NOTES_BASE_DIR, folder, filename]
+        .map(encodeURIComponent)
+        .join('/');
+    }
+
+    function formatNoteTitle(entry) {
+      if (entry.title) return entry.title;
+      return entry.file
+        .replace(/\.pdf$/i, '')
+        .replace(/[_-]+/g, ' ')
+        .trim();
+    }
+
+    function initNotesSection() {
+      const tabsEl = document.getElementById('notesTabs');
+      const panelEl = document.getElementById('notesPanel');
+      if (!tabsEl || !panelEl) return;
+
+      let activeIndex = NOTE_CATEGORIES.findIndex(cat => cat.files.length > 0);
+      if (activeIndex === -1) activeIndex = 0;
+
+      function renderTabs() {
+        tabsEl.innerHTML = '';
+        NOTE_CATEGORIES.forEach((category, idx) => {
+          const isActive = idx === activeIndex;
+          const tab = document.createElement('button');
+          tab.type = 'button';
+          tab.className = 'notes-tab' + (isActive ? ' active' : '');
+          tab.id = `notes-tab-${idx}`;
+          tab.setAttribute('role', 'tab');
+          tab.setAttribute('aria-selected', String(isActive));
+          tab.setAttribute('aria-controls', 'notesPanel');
+
+          const labelSpan = document.createElement('span');
+          labelSpan.textContent = category.label;
+          tab.appendChild(labelSpan);
+
+          const countSpan = document.createElement('span');
+          countSpan.className = 'notes-tab-count';
+          countSpan.textContent = String(category.files.length);
+          tab.appendChild(countSpan);
+
+          tab.addEventListener('click', () => {
+            if (activeIndex === idx) return;
+            activeIndex = idx;
+            renderTabs();
+            renderPanel();
+          });
+
+          tabsEl.appendChild(tab);
+        });
+      }
+
+      function renderPanel() {
+        const category = NOTE_CATEGORIES[activeIndex];
+        panelEl.innerHTML = '';
+        panelEl.setAttribute('aria-labelledby', `notes-tab-${activeIndex}`);
+
+        if (!category || category.files.length === 0) {
+          const empty = document.createElement('div');
+          empty.className = 'notes-empty';
+          empty.textContent = `No notes uploaded in ${category.label} yet.`;
+          panelEl.appendChild(empty);
+          return;
+        }
+
+        category.files.forEach((entry) => {
+          const noteUrl = buildNoteUrl(category.folder, entry.file);
+
+          const card = document.createElement('div');
+          card.className = 'note-card';
+
+          const info = document.createElement('div');
+          info.className = 'note-info';
+
+          const title = document.createElement('h3');
+          title.textContent = formatNoteTitle(entry);
+          info.appendChild(title);
+
+          const meta = document.createElement('div');
+          meta.className = 'meta';
+          meta.textContent = `PDF \u2022 ${category.label}`;
+          info.appendChild(meta);
+
+          const actions = document.createElement('div');
+          actions.className = 'note-actions';
+
+          const openLink = document.createElement('a');
+          openLink.href = noteUrl;
+          openLink.target = '_blank';
+          openLink.rel = 'noopener noreferrer';
+          openLink.className = 'btn btn-sm btn-primary';
+          openLink.textContent = 'Open';
+          actions.appendChild(openLink);
+
+          const downloadLink = document.createElement('a');
+          downloadLink.href = noteUrl;
+          downloadLink.setAttribute('download', entry.file);
+          downloadLink.className = 'btn btn-sm';
+          downloadLink.textContent = 'Download';
+          actions.appendChild(downloadLink);
+
+          card.appendChild(info);
+          card.appendChild(actions);
+          panelEl.appendChild(card);
+        });
+      }
+
+      renderTabs();
+      renderPanel();
+    }
+
+    initNotesSection();
 
     // Smooth, Continuous Swirling Black Hole (Lightweight 2D Canvas)
     const canvas = document.getElementById('bg-canvas');
