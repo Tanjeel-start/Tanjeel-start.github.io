@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tanjeel Rahman — Physics Undergraduate</title>
+  <meta name="description" content="Academic portfolio of Tanjeel Rahman, Physics undergraduate interested in theoretical astrophysics." />
+  <style>
+    :root {
+      --bg: #070a10;
+      --bg-card: rgba(17, 23, 35, 0.72);
+      --border: rgba(139, 162, 198, 0.16);
+      --text: #e8eef7;
+      --text-muted: #93a1b5;
+      --accent: #6cb4ff;
+      --accent-soft: rgba(108, 180, 255, 0.12);
+      --glow-1: rgba(56, 128, 255, 0.12);
+      --glow-2: rgba(138, 92, 246, 0.09);
+      --orbit-stroke: rgba(148, 179, 224, 0.11);
+      --max-w: 840px;
+      --radius: 12px;
+    }
+
+    [data-theme="light"] {
+      --bg: #f8fafd;
+      --bg-card: rgba(255, 255, 255, 0.82);
+      --border: rgba(15, 23, 42, 0.1);
+      --text: #0f172a;
+      --text-muted: #526075;
+      --accent: #0969da;
+      --accent-soft: rgba(9, 105, 218, 0.08);
+      --glow-1: rgba(9, 105, 218, 0.07);
+      --glow-2: rgba(99, 102, 241, 0.06);
+      --orbit-stroke: rgba(15, 23, 42, 0.07);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Background Graphics */
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 18% 18%, var(--glow-1) 0%, transparent 45%),
+        radial-gradient(circle at 82% 72%, var(--glow-2) 0%, transparent 48%);
+    }
+
+    .orbit-svg {
+      position: fixed;
+      top: -120px;
+      right: -160px;
+      width: 680px;
+      height: 680px;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
+    .orbit-svg circle,
+    .orbit-svg ellipse {
+      fill: none;
+      stroke: var(--orbit-stroke);
+      stroke-width: 1;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Navigation (No redundant name) */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: color-mix(in srgb, var(--bg) 80%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-container {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0.9rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      transition: color 0.15s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .theme-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.35rem 0.7rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-family: inherit;
+      backdrop-filter: blur(8px);
+    }
+
+    .theme-btn:hover {
+      border-color: var(--accent);
+    }
+
+    /* Main Layout */
+    main {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    section {
+      padding: 3.25rem 0 0.75rem;
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.35rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Minimalistic Hero */
+    .hero {
+      padding-top: 5.5rem;
+      padding-bottom: 2rem;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.82rem;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      margin-bottom: 1.1rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 5.5vw, 3.1rem);
+      font-weight: 700;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.9rem;
+    }
+
+    .hero-subtitle {
+      font-size: 1.12rem;
+      color: var(--text-muted);
+      max-width: 580px;
+      margin-bottom: 1.75rem;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.55rem 1.15rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text);
+      backdrop-filter: blur(8px);
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+
+    .btn:hover {
+      border-color: var(--accent);
+      text-decoration: none;
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.92;
+      color: #ffffff;
+    }
+
+    /* Cards & Timeline */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .card,
+    .timeline-item,
+    .honors-list li {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      backdrop-filter: blur(10px);
+    }
+
+    .card {
+      padding: 1.3rem;
+    }
+
+    .card h3 {
+      font-size: 1.02rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .meta {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 0.65rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .card p {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 1.15rem;
+    }
+
+    .timeline-item {
+      padding: 1.3rem;
+    }
+
+    .timeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .timeline-header h3 {
+      font-size: 1.02rem;
+    }
+
+    .timeline-org {
+      font-size: 0.92rem;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .timeline-item ul {
+      padding-left: 1.2rem;
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+
+    .timeline-item li {
+      margin-bottom: 0.3rem;
+    }
+
+    /* Honors List */
+    .honors-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .honors-list li {
+      padding: 0.9rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      font-size: 0.93rem;
+    }
+
+    .honors-list span {
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    /* Contact */
+    .contact-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-top: 0.85rem;
+      font-size: 0.93rem;
+    }
+
+    /* Footer */
+    footer {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 600px) {
+      .nav-links {
+        gap: 1rem;
+        font-size: 0.84rem;
+      }
+      .hero {
+        padding-top: 3.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Graphics -->
+  <canvas id="bg-canvas"></canvas>
+  <div class="bg-glow"></div>
+  <svg class="orbit-svg" viewBox="0 0 600 600" aria-hidden="true">
+    <circle cx="300" cy="300" r="140" stroke-dasharray="4 6" />
+    <circle cx="300" cy="300" r="215" />
+    <ellipse cx="300" cy="300" rx="280" ry="120" transform="rotate(-24 300 300)" />
+    <ellipse cx="300" cy="300" rx="250" ry="95" transform="rotate(32 300 300)" stroke-dasharray="3 8" />
+  </svg>
+
+  <header>
+    <div class="nav-container">
+      <nav class="nav-links">
+        <a href="#research">Research</a>
+        <a href="#experience">Experience</a>
+        <a href="#education">Education</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <button class="theme-btn" id="themeToggle" aria-label="Toggle theme">Light Mode</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero" id="about">
+      <span class="hero-tag">Physics Undergraduate</span>
+      <h1>Tanjeel Rahman</h1>
+      <p class="hero-subtitle">
+        Drawn to theoretical astrophysics and the fundamental physics shaping the universe.
+      </p>
+      <div class="btn-group">
+        <a href="#research" class="btn btn-primary">Explore Work</a>
+        <!-- Place your cv.pdf in the same folder -->
+        <a href="cv.pdf" class="btn" target="_blank">Curriculum Vitae</a>
+      </div>
+    </section>
+
+    <!-- Research & Projects -->
+    <section id="research">
+      <h2>Research &amp; Projects</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Computational Plasma Physics</h3>
+          <div class="meta">Ongoing</div>
+          <p>
+            Developing computational models and data-driven simulations to analyze and predict the
+            behavior of plasma systems.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Exoplanet Transit Light-Curve Analysis</h3>
+          <div class="meta">August 2025</div>
+          <p>
+            Processed and analyzed photometric transit light curves for K2-417b and TESS TOI 5027 b
+            using Python's <code>lightkurve</code> package.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>START Radio Telescope Project</h3>
+          <div class="meta">CASSA &bull; Ongoing</div>
+          <p>
+            Contributing to the START radio telescope initiative at the Center for Astronomy, Space
+            Science, and Astrophysics.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Experience -->
+    <section id="experience">
+      <h2>Experience</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-header">
+            <h3>Research Assistant</h3>
+            <span class="meta">June 2026 &ndash; Present</span>
+          </div>
+          <div class="timeline-org">Department of Physical Sciences, Independent University, Bangladesh</div>
+          <ul>
+            <li>Conducting computational plasma physics research under Dr. Asma Begum.</li>
+          </ul>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-header">
+            <h3>Research Intern</h3>
+            <span class="meta">Autumn 2025 &ndash; Present</span>
+          </div>
+          <div class="timeline-org">Center for Astronomy, Space Science, and Astrophysics (CASSA), IUB</div>
+          <ul>
+            <li>Working on the START radio telescope project and supporting astrophysical research activities.</li>
+            <!-- Official CASSA verification link will be added here later -->
+          </ul>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-header">
+            <h3>Teaching Assistant, Lab Assistant &amp; Student on Duty</h3>
+            <span class="meta">Autumn 2025 &ndash; Spring 2026</span>
+          </div>
+          <div class="timeline-org">Department of Physical Sciences, Independent University, Bangladesh</div>
+          <ul>
+            <li>Assisted faculty with undergraduate physics laboratories, coursework support, and departmental academic duties.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Education & Honors -->
+    <section id="education">
+      <h2>Education &amp; Honors</h2>
+      <div class="timeline" style="margin-bottom: 1.25rem;">
+        <div class="timeline-item">
+          <div class="timeline-header">
+            <h3>B.Sc. in Physics (Minor in Astronomy &amp; Astrophysics)</h3>
+            <span class="meta">Expected Summer 2027</span>
+          </div>
+          <div class="timeline-org" style="margin-bottom: 0;">Independent University, Bangladesh (IUB) &bull; Dhaka</div>
+        </div>
+      </div>
+
+      <ul class="honors-list">
+        <li>
+          <strong>Vice Chancellor's Honour List (VCHL)</strong>
+          <span>Independent University, Bangladesh</span>
+        </li>
+        <li>
+          <strong>Dean's Honour List (2&times;)</strong>
+          <span>Independent University, Bangladesh</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+      <h2>Contact</h2>
+      <div class="card">
+        <p>
+          Based in <strong>Dhaka, Bangladesh</strong>. Feel free to reach out for research
+          discussions or academic inquiries.
+        </p>
+        <div class="contact-links">
+          <span><strong>Email:</strong> <a href="mailto:tanjeelrahman997@gmail.com">tanjeelrahman997@gmail.com</a></span>
+          <span><strong>GitHub:</strong> <a href="https://github.com/Tanjeel-start" target="_blank">github.com/Tanjeel-start</a></span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>&copy; 2026 Tanjeel Rahman</span>
+  </footer>
+
+  <script>
+    // Theme toggle
+    const btn = document.getElementById('themeToggle');
+    const root = document.documentElement;
+
+    btn.addEventListener('click', () => {
+      const isDark = root.getAttribute('data-theme') === 'dark';
+      root.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      btn.textContent = isDark ? 'Dark Mode' : 'Light Mode';
+    });
+
+    // Subtle animated starfield background
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initStars();
+    }
+
+    function initStars() {
+      const count = Math.floor((canvas.width * canvas.height) / 14000);
+      stars = Array.from({ length: count }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.35 + 0.3,
+        vx: (Math.random() - 0.5) * 0.12,
+        vy: (Math.random() - 0.5) * 0.12,
+        alpha: Math.random() * 0.65 + 0.2
+      }));
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const isDark = root.getAttribute('data-theme') === 'dark';
+      const starColor = isDark ? '210, 228, 255' : '15, 23, 42';
+
+      for (const s of stars) {
+        s.x = (s.x + s.vx + canvas.width) % canvas.width;
+        s.y = (s.y + s.vy + canvas.height) % canvas.height;
+
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${starColor}, ${isDark ? s.alpha : s.alpha * 0.25})`;
+        ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+    draw();
+  </script>
+</body>
+</html>
